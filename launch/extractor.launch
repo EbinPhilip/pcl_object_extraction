@@ -1,0 +1,4 @@
+<launch>
+    <node name="object_extraction_service_node" pkg="pcl_object_extraction" type="pcl_object_extraction_service_node" output="screen"/>
+    <node name="mesh_creation_service_node" pkg="pcl_object_extraction" type="mesh_creation_service_node" output="screen"/>
+</launch>
