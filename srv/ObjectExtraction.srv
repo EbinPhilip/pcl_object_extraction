@@ -1,0 +1,4 @@
+sensor_msgs/PointCloud2 inputCloud
+yolo_object_detection/BoundingBox boundingBox
+---
+sensor_msgs/PointCloud2 extractedObject

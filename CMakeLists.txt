@@ -7,7 +7,25 @@ project(pcl_object_extraction)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+    cv_bridge
+    rospy
+    sensor_msgs
+    shape_msgs
+    visualization_msgs
+    std_msgs
+    pcl_msgs
+    pcl_ros
+    roscpp
+    yolo_object_detection
+    message_generation
+)
+
+find_package(PCL 1.2 REQUIRED)
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -50,11 +68,11 @@ find_package(catkin REQUIRED)
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ObjectExtraction.srv
+  MeshCreation.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -64,10 +82,13 @@ find_package(catkin REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  sensor_msgs
+  shape_msgs
+  yolo_object_detection
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -101,7 +122,7 @@ find_package(catkin REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pcl_object_extraction
-#  CATKIN_DEPENDS other_catkin_pkg
+ CATKIN_DEPENDS yolo_object_detection
 #  DEPENDS system_lib
 )
 
@@ -112,14 +133,17 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+include/${PROJECT_NAME}
+${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/pcl_object_extraction.cpp
-# )
+# Declare a C++ library
+add_library(${PROJECT_NAME}
+  src/ObjectExtractor.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -129,7 +153,21 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/pcl_object_extraction_node.cpp)
+add_executable(pcl_object_extraction_service_node
+src/ObjectExtractionServiceNode.cpp
+)
+target_link_libraries(pcl_object_extraction_service_node
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
+
+add_executable(mesh_creation_service_node
+src/MeshCreationServiceNode.cpp
+)
+target_link_libraries(mesh_creation_service_node
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
