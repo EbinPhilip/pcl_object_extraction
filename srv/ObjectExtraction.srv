@@ -2,3 +2,4 @@ sensor_msgs/PointCloud2 inputCloud
 yolo_object_detection/BoundingBox boundingBox
 ---
 sensor_msgs/PointCloud2 extractedObject
+pcl_object_extraction/ObjectBoundingBox boundingBox3d

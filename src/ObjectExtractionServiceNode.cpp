@@ -53,6 +53,8 @@ bool extractObjects(pcl_object_extraction::ObjectExtraction::Request& request,
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr extractedObject(new pcl::PointCloud<pcl::PointXYZRGB>());
     objectExtractor.removeStatisticalOutlier(groundFilteredCloud, extractedObject);
 
+    response.boundingBox3d = objectExtractor.getBoundingBox(extractedObject);
+
     // convert back from pcl::pointcloud to ros pointcloud2 msg
     pcl::PCLPointCloud2 extractedObjectPc2;
     pcl::toPCLPointCloud2(*extractedObject, extractedObjectPc2);

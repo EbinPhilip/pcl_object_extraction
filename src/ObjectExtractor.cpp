@@ -3,6 +3,7 @@
 #include <pcl/filters/crop_box.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/features/moment_of_inertia_estimation.h>
 
 ObjectBox ObjectExtractor::getObjectBox(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud,
                                         yolo_object_detection::BoundingBox box)
@@ -73,8 +74,36 @@ void ObjectExtractor::removeStatisticalOutlier(pcl::PointCloud<pcl::PointXYZRGB>
                                                pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud)
 {
     pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-    sor.setInputCloud (inputCloud);
-    sor.setMeanK (50);
-    sor.setStddevMulThresh (3.0);
-    sor.filter (*outputCloud);
+    sor.setInputCloud(inputCloud);
+    sor.setMeanK(50);
+    sor.setStddevMulThresh(3.0);
+    sor.filter(*outputCloud);
+}
+
+pcl_object_extraction::ObjectBoundingBox ObjectExtractor::getBoundingBox(
+    pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud)
+{
+    float maxx, minx, maxy, miny, maxz, minz;
+    maxx = maxy = maxz = -std::numeric_limits<float>::max();
+    minx = miny = minz = std::numeric_limits<float>::max();
+    for (int i = 0; i < cloud->size(); ++i)
+    {
+        pcl::PointXYZRGB point = cloud->points[i];
+        maxx = std::max(point.x, maxx);
+        maxy = std::max(point.y, maxy);
+        maxz = std::max(point.z, maxz);
+        minx = std::min(point.x, minx);
+        miny = std::min(point.y, miny);
+        minz = std::min(point.z, minz);
+    }
+
+    pcl_object_extraction::ObjectBoundingBox boundingBox;
+    boundingBox.xmax = maxx;
+    boundingBox.xmin = minx;
+    boundingBox.ymax = maxy;
+    boundingBox.ymin = miny;
+    boundingBox.zmax = maxz;
+    boundingBox.zmin = minz;
+
+    return boundingBox;
 }

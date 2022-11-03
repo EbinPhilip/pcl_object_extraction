@@ -5,6 +5,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+#include "pcl_object_extraction/ObjectBoundingBox.h"
+
 struct ObjectBox
 {
     ObjectBox(Eigen::Vector4f min_, Eigen::Vector4f max_)
@@ -19,18 +21,21 @@ struct ObjectBox
 
 class ObjectExtractor
 {
-    public:
+public:
     ObjectBox getObjectBox(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud,
-            yolo_object_detection::BoundingBox box);
+                           yolo_object_detection::BoundingBox box);
 
     void extractBox(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr inputCloud,
-            ObjectBox box, pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
+                    ObjectBox box, pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
 
     void removeGroundPlane(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr inputCloud,
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
+                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
 
     void removeStatisticalOutlier(pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr inputCloud,
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
+                                  pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
+
+    pcl_object_extraction::ObjectBoundingBox getBoundingBox(
+            pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud);
 };
 
 #endif
