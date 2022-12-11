@@ -65,7 +65,7 @@ void ObjectExtractor::removeGroundPlane(pcl::PointCloud<pcl::PointXYZRGB>::Const
     pcl::PassThrough<pcl::PointXYZRGB> pass;
     pass.setInputCloud(inputCloud);
     pass.setFilterFieldName("z");
-    pass.setFilterLimits(0.002, FLT_MAX);
+    pass.setFilterLimits(0.1, FLT_MAX);
     // pass.setNegative (true);
     pass.filter(*outputCloud);
 }
