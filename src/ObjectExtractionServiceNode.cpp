@@ -14,10 +14,10 @@
 
 #include "ObjectExtractor.h"
 
-tf::TransformListener* tfListener;
+tf::TransformListener *tfListener;
 
-bool extractObjects(pcl_object_extraction::ObjectExtraction::Request& request,
-        pcl_object_extraction::ObjectExtraction::Response& response)
+bool extractObjects(pcl_object_extraction::ObjectExtraction::Request &request,
+                    pcl_object_extraction::ObjectExtraction::Response &response)
 {
     ObjectExtractor objectExtractor;
 
@@ -38,6 +38,7 @@ bool extractObjects(pcl_object_extraction::ObjectExtraction::Request& request,
     pcl::PCLPointCloud2 extractedCloudPc2;
     pcl::toPCLPointCloud2(*extractedCloud, extractedCloudPc2);
     pcl_conversions::fromPCL(extractedCloudPc2, extractedCloudMsg);
+    extractedCloudMsg.header.stamp = ros::Time(0);
     pcl_ros::transformPointCloud("base_link", extractedCloudMsg, extractedCloudTransformed, *tfListener);
 
     // once again, get the pcl representation of the transformed object cloud

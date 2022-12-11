@@ -17,6 +17,8 @@ pointCloudPublisher = None
 image = None
 cloud = None
 
+allowed = ['apple', 'banana', 'cup', 'bottle']
+
 def imageCallback(img:Image):
     global image
     image = img
@@ -37,15 +39,15 @@ def callback():
     cld = cloud
     detectResponse = objectDetectorService(detectRequest)
     for object in detectResponse.detectedObjects.box:
-        if object.name == 'cup':
-            box = object.box
-            extractRequest = ObjectExtractionRequest()
-            extractRequest.inputCloud = cld
-            extractRequest.boundingBox = box
-            extractResponse = objectExtractorService(extractRequest)
-            global pointCloudPublisher
-            pointCloudPublisher.publish(extractResponse.extractedObject)
-            return
+        if not object.name in allowed:
+            continue
+        box = object.box
+        extractRequest = ObjectExtractionRequest()
+        extractRequest.inputCloud = cld
+        extractRequest.boundingBox = box
+        extractResponse = objectExtractorService(extractRequest)
+        global pointCloudPublisher
+        pointCloudPublisher.publish(extractResponse.extractedObject)
     
 
 if __name__ == '__main__':
